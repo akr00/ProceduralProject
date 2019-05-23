@@ -57,7 +57,10 @@ int main() {
 
     return 0;
 }
-
+/**
+ * Shows a menu and gathers user input to select an option.
+ * @return
+ */
 int getChoice() {
     int pick = 0;
     cout << "\n\nProduction Line Tracker\n" << endl;
@@ -74,6 +77,9 @@ int getChoice() {
 
 /**
  * Made for creating new products, acquires all information and creates it in a text file
+ *
+ * catalog holds all of the created products
+ * a file to count each item's production numbers is also created here
  */
 
 void newProduct() {
@@ -106,9 +112,9 @@ void newProduct() {
     cout << "Creating the " << output << endl;
     ofstream myOFile;
     myOFile.open("catalog", ios::app);
-    myOFile << output << endl;
+    myOFile << (output) << endl;
     ofstream myPOFile;
-    myPOFile.open((output + "(counter)"), ios::app);
+    myPOFile.open((output), ios::app);
     myPOFile << 0 << endl;
     myPOFile.close();
 }
@@ -116,7 +122,14 @@ void newProduct() {
 void AddEmployeeAcc() {
 
 }
-
+/**
+ * creates new product--
+ * asks which product from the catalog is being made, then how many.
+ * crates each product with an individual production number and serial number.
+ * outputs each product to the productionLog
+ * also keeps track of how many of each were made
+ *
+ */
 void produce() {
     string line;
     int i = 1;
@@ -169,12 +182,12 @@ void produce() {
     } else {
         cout << "Invalid Selection..." << endl;
     }
-    ofstream myCOFile;
+    ofstream myCOFile;          //vvv   updates the number of total products that have been made
     myCOFile.open("countProductionRecord");
     myCOFile << productionNumber;
     myCOFile.close();
-    ofstream myPFile;
-    myPFile.open((product + "(counter)"));
+    ofstream myPFile;            //vvv   updates the number of each product that have been made
+    myPFile.open((product));
     myPFile << itemCount;
     myPFile.close();
 
@@ -183,7 +196,10 @@ void produce() {
 void showStats() {
 
 }
-
+/**
+ * Shows a menu and gathers user input to select an option.
+ * @return
+ */
 int productTypeMenu() {
     int pick = 0;
     cout << "Product Type Menu \n" << endl;
