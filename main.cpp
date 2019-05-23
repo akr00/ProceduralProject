@@ -155,7 +155,7 @@ void produce() {
 
     string product;
     ifstream mySFile("catalog");
-    for (int i = 0; i <= (productChoice - 1); i++) {
+    for (int h = 0; h <= (productChoice - 1); h++) {
         getline(mySFile, product);
     }
     if (productChoice <= (i - 1)) {
