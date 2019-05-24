@@ -89,11 +89,11 @@ void newProduct() {
     string output;
     int typeChoice;
     cout << "Creating new Product.." << endl;
-    cout << "Enter the Manufacturer --> " << flush;
+    cout << "Enter the Manufacturer (DO NOT USE SPACES)--> " << flush;
     cin >> manufacturer;
-    cout << "\n Enter the Product Name --> " << flush;
+    cout << "\n Enter the Product Name (DO NOT USE SPACES)--> " << flush;
     cin >> name;
-    cout << "Select the Product Type Code:";
+    cout << "Select the Product Type Code:" << flush;
     do {
         typeChoice = productTypeMenu();
 
@@ -113,10 +113,12 @@ void newProduct() {
     ofstream myOFile;
     myOFile.open("catalog", ios::app);
     myOFile << (output) << endl;
+    /*
     ofstream myPOFile;
     myPOFile.open((output), ios::app);
     myPOFile << 0 << endl;
     myPOFile.close();
+     */
 }
 
 void AddEmployeeAcc() {
@@ -161,7 +163,7 @@ void produce() {
     if (productChoice <= (i - 1)) {
 
         ifstream myPIFile;
-        myPIFile.open(product, ios::app);
+        myPIFile.open((product.substr((product.length()-2), product.length())+ "counter"), ios::app);
         myPIFile >> itemCount;
         myPIFile.close();
 
@@ -187,9 +189,10 @@ void produce() {
     myCOFile << productionNumber;
     myCOFile.close();
     ofstream myPFile;            //vvv   updates the number of each product that have been made
-    myPFile.open((product));
+    myPFile.open(((product.substr((product.length()-2), product.length())+ "counter")));
     myPFile << itemCount;
     myPFile.close();
+
 
 }
 
