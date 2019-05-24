@@ -57,6 +57,7 @@ int main() {
 
     return 0;
 }
+
 /**
  * Shows a menu and gathers user input to select an option.
  * @return
@@ -124,6 +125,7 @@ void newProduct() {
 void AddEmployeeAcc() {
 
 }
+
 /**
  * creates new product--
  * asks which product from the catalog is being made, then how many.
@@ -163,7 +165,7 @@ void produce() {
     if (productChoice <= (i - 1)) {
 
         ifstream myPIFile;
-        myPIFile.open((product.substr((product.length()-2), product.length())+ "counter"), ios::app);
+        myPIFile.open((product.substr((product.length() - 2), product.length()) + "counter"), ios::app);
         myPIFile >> itemCount;
         myPIFile.close();
 
@@ -178,7 +180,9 @@ void produce() {
             ++itemCount;
             myPFile << " |||| Production # " << setw(6) << setfill('0') << productionNumber << " |||| " << setw(25)
                     << setfill(' ') << product
-                    << " |||| Serial # " << product.substr(0,3) << product.substr((product.length()-2), product.length())<< setw(6) << setfill('0') << itemCount << endl;
+                    << " |||| Serial # " << product.substr(0, 3)
+                    << product.substr((product.length() - 2), product.length()) << setw(6) << setfill('0') << itemCount
+                    << endl;
         }
 
     } else {
@@ -189,7 +193,7 @@ void produce() {
     myCOFile << productionNumber;
     myCOFile.close();
     ofstream myPFile;            //vvv   updates the number of each product that have been made
-    myPFile.open(((product.substr((product.length()-2), product.length())+ "counter")));
+    myPFile.open(((product.substr((product.length() - 2), product.length()) + "counter")));
     myPFile << itemCount;
     myPFile.close();
 
@@ -197,8 +201,18 @@ void produce() {
 }
 
 void showStats() {
+    string line;
+    ifstream myFile("productionLog");
+    if (myFile.is_open()) {
+        while (getline(myFile, line))  // takes a line form the file then is used to output
+        {
+            cout << line << endl;
 
+        }
+        // myFile.close();
+    } else cout << "Unable to open file";
 }
+
 /**
  * Shows a menu and gathers user input to select an option.
  * @return
