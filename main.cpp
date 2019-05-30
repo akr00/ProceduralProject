@@ -1,7 +1,11 @@
-// Created by Aiden Ridgeway
-//      on 5/17/19
-//     Procedual Project
-//
+/**@file main.cpp
+ * @brief The whole program(for now)
+ *
+ *
+ *
+ * @author Aiden Ridgeway
+ * @bug breaks / loops when a space is entered in the 'cin' within newProduct
+ */
 
 #include <iostream>
 #include <fstream>
@@ -21,6 +25,8 @@ void newProduct();
 void showStats();
 
 int productTypeMenu();
+int statMenu();
+void search(string);
 
 int main() {
     int choice = 0;
@@ -59,8 +65,8 @@ int main() {
 }
 
 /**
- * Shows a menu and gathers user input to select an option.
- * @return
+ * @brief Shows a menu and gathers user input to select an option.
+ * @return the choice
  */
 int getChoice() {
     int pick = 0;
@@ -77,7 +83,7 @@ int getChoice() {
 }
 
 /**
- * Made for creating new products, acquires all information and creates it in a text file
+ * @brief Made for creating new products, acquires all information and creates it in a text file
  *
  * catalog holds all of the created products
  * a file to count each item's production numbers is also created here
@@ -90,10 +96,11 @@ void newProduct() {
     string output;
     int typeChoice;
     cout << "Creating new Product.." << endl;
-    cout << "Enter the Manufacturer (DO NOT USE SPACES)--> " << flush;
-    cin >> manufacturer;
-    cout << "\n Enter the Product Name (DO NOT USE SPACES)--> " << flush;
-    cin >> name;
+    cout << "Enter the Manufacturer --> " << flush;
+    cin.ignore();
+    getline(cin, manufacturer);
+    cout << "\n Enter the Product Name --> " << flush;
+    getline(cin, name);
     cout << "Select the Product Type Code:" << flush;
     do {
         typeChoice = productTypeMenu();
@@ -109,10 +116,10 @@ void newProduct() {
         }
 
     } while (typeChoice > 4 || typeChoice < 0);
-    output = manufacturer + " " + name + " " + type;
+    output = manufacturer + ", " + name + ", " + type+ ", ";
     cout << "Creating the " << output << endl;
     ofstream myOFile;
-    myOFile.open("catalog", ios::app);
+    myOFile.open("catalog.csv", ios::app);
     myOFile << (output) << endl;
     /*
     ofstream myPOFile;
@@ -127,7 +134,8 @@ void AddEmployeeAcc() {
 }
 
 /**
- * creates new product--
+ * @brief creates new product--
+ *
  * asks which product from the catalog is being made, then how many.
  * crates each product with an individual production number and serial number.
  * outputs each product to the productionLog
@@ -136,20 +144,26 @@ void AddEmployeeAcc() {
  */
 void produce() {
     string line;
-    int i = 1;
+    int i = 0;
     int productionNumber;
     int itemCount = 0;
     ifstream myCFile;
     myCFile.open("countProductionRecord", ios::app);
     myCFile >> productionNumber;
     myCFile.close();
-    ifstream myFile("catalog");
+    ifstream myFile("catalog.csv");
     if (myFile.is_open()) {
         while (getline(myFile, line))  // takes a line form the file then is used to output
         {
+            if(i == 0){
+                i++;
+                continue;
+            }
+            else {
 
-            cout << i << ". " << line << endl;
-            i++;
+                cout << i << ". " << line << endl;
+                i++;
+            }
         }
         // myFile.close();
     } else cout << "Unable to open file";
@@ -158,8 +172,8 @@ void produce() {
     cin >> productChoice;
 
     string product;
-    ifstream mySFile("catalog");
-    for (int h = 0; h <= (productChoice - 1); h++) {
+    ifstream mySFile("catalog.csv");
+    for (int h = 1; h <= (productChoice + 1); h++) {
         getline(mySFile, product);
     }
     if (productChoice <= (i - 1)) {
@@ -202,19 +216,74 @@ void produce() {
 
 void showStats() {
     string line;
-    ifstream myFile("productionLog");
-    if (myFile.is_open()) {
-        while (getline(myFile, line))  // takes a line form the file then is used to output
-        {
-            cout << line << endl;
+    int chosen = statMenu();
 
-        }
-        // myFile.close();
-    } else cout << "Unable to open file";
+    if(chosen == 1) {
+        ifstream myFile("productionLog");
+        if (myFile.is_open()) {
+
+            while (getline(myFile, line))  // takes a line form the file then is used to output
+            {
+                cout << line << endl;
+
+            }
+             myFile.close();
+        } else cout << "Unable to open file";
+    }
+    else if (chosen == 2){
+
+        ifstream myFile("catalog.csv");
+        if (myFile.is_open()) {
+            string man, name, type;
+            int count = 0;
+
+            while (myFile.good())  // takes a line form the file then is used to output
+            {
+                getline(myFile, man,',');
+                getline(myFile, name,',');
+                getline(myFile, type,',');
+                if(count>0){
+                    cout << name << endl;
+
+                }
+                count ++;
+            }
+            myFile.close();
+        } else cout << "Unable to open file";
+    }
+    else if (chosen == 3){
+        ifstream myFile("catalog.csv");
+        if (myFile.is_open()) {
+            string man, name, type;
+            int count = 0;
+            while (myFile.good())  // takes a line form the file then is used to output
+            {
+                getline(myFile, man,',');
+                getline(myFile, name,',');
+                getline(myFile, type,',');
+                if(count>0){
+                    cout << man << endl;
+                }
+                count ++;
+            }
+            myFile.close();
+        } else cout << "Unable to open file";
+    }
+    else if (chosen  == 4){
+        string serial;
+        cout << "What is the Serial Number -->  " << flush;
+        cin >> serial;
+        search(serial);
+
+    }
+    else{
+        showStats();
+    }
 }
 
 /**
- * Shows a menu and gathers user input to select an option.
+ * @brief Shows a menu and gathers user input to select an option.
+ *
  * @return
  */
 int productTypeMenu() {
@@ -227,4 +296,27 @@ int productTypeMenu() {
     cout << "Enter your choice(1,2,3,4) --> " << flush;
     cin >> pick;
     return pick;
+}
+
+int statMenu(){
+    int choice;
+    cout << "1. Show Production Log" << endl;
+    cout << "2. Show Product Names" << endl;
+    cout << "3. Show Manufactures" << endl;
+    cout << "4. Search by Serial Number" << endl;
+    cout << "\n   Enter Menu Choice --> " << flush;
+    cin >> choice;
+
+
+    return choice;
+}
+void search(string input){
+    ifstream fileInput("productionLog");
+    string line;
+    for(unsigned int curLine = 0; getline(fileInput, line); curLine++) {
+        if (line.find(input) != string::npos) {
+           cout << "Found -->  " <<  line.substr(5,20) << endl;
+           break;
+        }
+    }
 }
