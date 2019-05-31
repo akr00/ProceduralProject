@@ -11,6 +11,8 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -25,14 +27,19 @@ void newProduct();
 void showStats();
 
 int productTypeMenu();
+
 int statMenu();
-void search(string);
+
+void search(const string&);
+
+bool compareFunction(const std::string& a, const std::string& b) { return a < b; }
 
 int main() {
     int choice = 0;
 
     do {
         choice = getChoice();
+
 
         switch (choice) {
             case 1 :
@@ -56,7 +63,8 @@ int main() {
                 break;
             default:
                 cout << "Enter a Valid Choice..." << endl;
-
+                cin.clear();
+                cin.ignore();
         }
     } while (choice != 5);
 
@@ -116,7 +124,7 @@ void newProduct() {
         }
 
     } while (typeChoice > 4 || typeChoice < 0);
-    output = manufacturer + ", " + name + ", " + type+ ", ";
+    output = manufacturer + ", " + name + ", " + type + ", ";
     cout << "Creating the " << output << endl;
     ofstream myOFile;
     myOFile.open("catalog.csv", ios::app);
@@ -147,41 +155,53 @@ void produce() {
     int i = 0;
     int productionNumber;
     int itemCount = 0;
+
+    //Opens files
+
     ifstream myCFile;
     myCFile.open("countProductionRecord", ios::app);
     myCFile >> productionNumber;
     myCFile.close();
     ifstream myFile("catalog.csv");
+
+    //shows a menu for the available products
+
     if (myFile.is_open()) {
         while (getline(myFile, line))  // takes a line form the file then is used to output
         {
-            if(i == 0){
+            if (i == 0) {
                 i++;
                 continue;
-            }
-            else {
+            } else {
 
                 cout << i << ". " << line << endl;
                 i++;
             }
         }
-        // myFile.close();
+        myFile.close();
     } else cout << "Unable to open file";
     cout << "\nWhich Product is Being Produced...\nEnter the Number --> " << flush;
     int productChoice = 0;
     cin >> productChoice;
-
+    string type, name, man;
     string product;
     ifstream mySFile("catalog.csv");
+
+    //Finds the actual product with corresponding choice
+
     for (int h = 1; h <= (productChoice + 1); h++) {
-        getline(mySFile, product);
+
+        getline(mySFile, man, ',');
+        getline(mySFile, name, ',');
+        getline(mySFile, type, ',');
+
     }
     if (productChoice <= (i - 1)) {
-
         ifstream myPIFile;
-        myPIFile.open((product.substr((product.length() - 2), product.length()) + "counter"), ios::app);
+        myPIFile.open((type + "counter"), ios::app);
         myPIFile >> itemCount;
         myPIFile.close();
+        product = man + name + type;
 
         cout << "You Selected : " << product << endl;
         cout << "\nHow Many Are Being Produced -->" << flush;
@@ -189,13 +209,16 @@ void produce() {
         cin >> quantity;
         ofstream myPFile;
         myPFile.open("productionLog", ios::app);
+
+        //writes to production log with my design
+
         for (int j = 0; j < quantity; j++) {
             ++productionNumber;
             ++itemCount;
             myPFile << " |||| Production # " << setw(6) << setfill('0') << productionNumber << " |||| " << setw(25)
-                    << setfill(' ') << product
-                    << " |||| Serial # " << product.substr(0, 3)
-                    << product.substr((product.length() - 2), product.length()) << setw(6) << setfill('0') << itemCount
+                    << setfill(' ') << product.substr(1, (product.length()))
+                    << " |||| Serial # " << man.substr(1, 3)
+                    << (type.substr(1, 2)) << setw(6) << setfill('0') << itemCount
                     << endl;
         }
 
@@ -207,7 +230,7 @@ void produce() {
     myCOFile << productionNumber;
     myCOFile.close();
     ofstream myPFile;            //vvv   updates the number of each product that have been made
-    myPFile.open(((product.substr((product.length() - 2), product.length()) + "counter")));
+    myPFile.open(type + "counter");
     myPFile << itemCount;
     myPFile.close();
 
@@ -218,7 +241,7 @@ void showStats() {
     string line;
     int chosen = statMenu();
 
-    if(chosen == 1) {
+    if (chosen == 1) {
         ifstream myFile("productionLog");
         if (myFile.is_open()) {
 
@@ -227,56 +250,73 @@ void showStats() {
                 cout << line << endl;
 
             }
-             myFile.close();
+            myFile.close();
         } else cout << "Unable to open file";
-    }
-    else if (chosen == 2){
+    } else if (chosen == 2) {
 
         ifstream myFile("catalog.csv");
         if (myFile.is_open()) {
-            string man, name, type;
-            int count = 0;
+            vector<string> temp;
+            string man, name, type, no;
 
-            while (myFile.good())  // takes a line form the file then is used to output
+
+            while (getline(myFile, no))  // takes a line form the file then is used to output
             {
-                getline(myFile, man,',');
-                getline(myFile, name,',');
-                getline(myFile, type,',');
-                if(count>0){
-                    cout << name << endl;
 
-                }
-                count ++;
+                getline(myFile, man, ',');
+                getline(myFile, name, ',');
+                getline(myFile, type, ',');
+
+                temp.push_back(name);
+
+
             }
+            temp.pop_back();
+            sort(temp.begin(), temp.end(), compareFunction);
             myFile.close();
+
+            for (const string& i : temp) {
+                cout << i << endl;
+            }
+
+
         } else cout << "Unable to open file";
-    }
-    else if (chosen == 3){
+    } else if (chosen == 3) {
+
         ifstream myFile("catalog.csv");
         if (myFile.is_open()) {
-            string man, name, type;
-            int count = 0;
-            while (myFile.good())  // takes a line form the file then is used to output
+            vector<string> temp;
+            string man, name, type, no;
+
+
+            while (getline(myFile, no))  // takes a line form the file then is used to output
             {
-                getline(myFile, man,',');
-                getline(myFile, name,',');
-                getline(myFile, type,',');
-                if(count>0){
-                    cout << man << endl;
-                }
-                count ++;
+
+                getline(myFile, man, ',');
+                getline(myFile, name, ',');
+                getline(myFile, type, ',');
+
+                temp.push_back(man);
+
+
             }
+            temp.pop_back();
+            sort(temp.begin(), temp.end(), compareFunction);
             myFile.close();
+
+            for (const string& i : temp) {
+                cout << i << endl;
+            }
+
+
         } else cout << "Unable to open file";
-    }
-    else if (chosen  == 4){
+    } else if (chosen == 4) {
         string serial;
         cout << "What is the Serial Number -->  " << flush;
         cin >> serial;
         search(serial);
 
-    }
-    else{
+    } else {
         showStats();
     }
 }
@@ -298,7 +338,7 @@ int productTypeMenu() {
     return pick;
 }
 
-int statMenu(){
+int statMenu() {
     int choice;
     cout << "1. Show Production Log" << endl;
     cout << "2. Show Product Names" << endl;
@@ -310,13 +350,14 @@ int statMenu(){
 
     return choice;
 }
-void search(string input){
+
+void search(const string& input) {
     ifstream fileInput("productionLog");
     string line;
-    for(unsigned int curLine = 0; getline(fileInput, line); curLine++) {
+    for (unsigned int curLine = 0; getline(fileInput, line); curLine++) {
         if (line.find(input) != string::npos) {
-           cout << "Found -->  " <<  line.substr(5,20) << endl;
-           break;
+            cout << "Found -->  " << line.substr(5, 20) << endl;
+            break;
         }
     }
 }
