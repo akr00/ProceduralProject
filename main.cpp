@@ -32,7 +32,7 @@ int statMenu();
 
 void search(const string&);
 
-bool compareFunction(const std::string& a, const std::string& b) { return a < b; }
+bool compare(const std::string& a, const std::string& b) { return a < b; }
 
 int main() {
     int choice = 0;
@@ -301,7 +301,7 @@ void showStats() {
 
             }
             temp.pop_back();
-            sort(temp.begin(), temp.end(), compareFunction);
+            sort(temp.begin(), temp.end(), compare);
             myFile.close();
 
             for (const string& i : temp) {
