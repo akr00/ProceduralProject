@@ -272,7 +272,7 @@ void showStats() {
 
             }
             temp.pop_back();
-            sort(temp.begin(), temp.end(), compareFunction);
+            sort(temp.begin(), temp.end(), compare);
             myFile.close();
 
             for (const string& i : temp) {
