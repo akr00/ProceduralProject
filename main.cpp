@@ -13,8 +13,16 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <cctype>
+#include <cstring>
 
 using namespace std;
+
+string getPassword();
+
+string encrypt(string);
+
+void login();
 
 int getChoice();
 
@@ -30,13 +38,13 @@ int productTypeMenu();
 
 int statMenu();
 
-void search(const string&);
+void search(const string &);
 
-bool compare(const std::string& a, const std::string& b) { return a < b; }
+bool compare(const std::string &a, const std::string &b) { return a < b; }
 
 int main() {
     int choice = 0;
-
+    cout << "Production Line Tracker\n" << endl;
     do {
         choice = getChoice();
 
@@ -59,6 +67,10 @@ int main() {
                 showStats();
                 break;
             case 5:
+                cout << "You Entered 5 \n" << endl;
+                login();
+                break;
+            case 6:
                 cout << "Exiting...\n" << "Thank you for using" << endl;
                 break;
             default:
@@ -66,7 +78,7 @@ int main() {
                 cin.clear();
                 cin.ignore();
         }
-    } while (choice != 5);
+    } while (choice != 6);
 
 
     return 0;
@@ -78,12 +90,14 @@ int main() {
  */
 int getChoice() {
     int pick = 0;
-    cout << "\n\nProduction Line Tracker\n" << endl;
-    cout << "1. Produce Products" << endl;
+
+    cout << "\n1. Produce Products" << endl;
     cout << "2. Add Employee Account" << endl;
     cout << "3. Add New Product" << endl;
     cout << "4. Display Production Statistics" << endl;
-    cout << "5. Exit\n" << endl;
+    cout << "5. Login" << endl;
+    cout << "6. Exit\n" << endl;
+
     cout << "Enter your choice --> " << flush;
     cin >> pick;
 
@@ -138,6 +152,51 @@ void newProduct() {
 }
 
 void AddEmployeeAcc() {
+
+    cout << "Enter your full first and last name --> " << flush;
+    string firstName, lastName;
+    cin >> firstName >> lastName;
+    string encryptedPass;
+
+    transform(firstName.begin(), firstName.end(), firstName.begin(), ::tolower);
+    transform(lastName.begin(), lastName.end(), lastName.begin(), ::tolower);
+    string username = firstName.substr(0, 1) + lastName;
+
+    cout << "Your username is: " << username << endl;
+    bool valid;
+    string password;
+    do {
+        bool cap = false;
+        bool num = false;
+        bool low = false;
+        bool sym = true;
+
+        password = getPassword();
+        for (int i = 0; i < password.length(); i++) {
+            if (isupper(password[i]))
+                cap = true;
+            else
+                low = true;
+            if (isdigit(password[i]))
+                num = true;
+            if(ispunct(password[i]) || isspace(password[i]))
+                sym = false;
+        }
+        valid = (cap && low && num && sym);
+
+        if (valid) {
+            cout << "Your password is --> " << password << endl;
+        } else {
+            cout << "Invalid password" << endl;
+        }
+    } while (!valid);
+
+    encryptedPass = encrypt(password);
+    cout << encryptedPass;
+    ofstream outFile;
+    outFile.open("users", ios::app);
+    outFile << username << "," << encryptedPass << "," << endl;
+
 
 }
 
@@ -275,7 +334,7 @@ void showStats() {
             sort(temp.begin(), temp.end(), compare);
             myFile.close();
 
-            for (const string& i : temp) {
+            for (const string &i : temp) {
                 cout << i << endl;
             }
 
@@ -304,7 +363,7 @@ void showStats() {
             sort(temp.begin(), temp.end(), compare);
             myFile.close();
 
-            for (const string& i : temp) {
+            for (const string &i : temp) {
                 cout << i << endl;
             }
 
@@ -351,7 +410,7 @@ int statMenu() {
     return choice;
 }
 
-void search(const string& input) {
+void search(const string &input) {
     ifstream fileInput("productionLog");
     string line;
     for (unsigned int curLine = 0; getline(fileInput, line); curLine++) {
@@ -360,4 +419,79 @@ void search(const string& input) {
             break;
         }
     }
+}
+
+string getPassword() {
+    cout
+            << "\nThe password must contain at least one digit, at least one lowercase letter, and at least one uppercase letter.\n"
+            <<
+            "The password cannot contain a space or any other symbols\n    " << "Create your password -->" << flush;
+
+    string pass;
+    cin >> pass;
+
+
+    return pass;
+}
+
+
+string encrypt(string str) {
+    if (str.length() == 0) {
+        return str;
+    } else {
+        return char((int) str[0] + 17) + encrypt(str.substr(1, str.length() - 1));
+    }
+}
+
+void login(){
+
+    ifstream myFile("users");
+    vector<string> users;
+    vector<string> keys;
+    string user, pass;
+
+    while (myFile.good())  // takes a line form the file then is used to output
+    {
+
+        getline(myFile, user, ',');
+        getline(myFile, pass, ',');
+
+
+        users.push_back(user);
+        keys.push_back(pass);
+        cout << user << " " << pass << endl;
+
+    }
+
+    string username, password;
+    cout << "Enter username -->" << flush;
+    cin >> username;
+    cout << endl;
+    cout << "Enter password -->" << flush;
+    cin >> password;
+    password = encrypt(password);
+    bool correctName = false;
+    bool correctPass = false;
+    int count = 0;
+    for (int i = 0 ; i < users.size(); i++) {
+        if(users[i] == username){
+            correctName = true;
+            break;
+        }
+        count++;
+    }
+    cout << count << endl;
+    if(!correctName) {
+        cout << "Not Valid Username" << endl;
+    }
+    if(keys[count] == password){
+        correctPass = true;
+    }
+    else
+        cout << "Incorrect Password" << endl;
+
+    if(correctName && correctPass){
+        cout << "Login Successful" << endl;
+    }
+
 }
