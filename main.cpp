@@ -18,6 +18,21 @@
 
 using namespace std;
 
+struct Product {
+    string manufacturer;
+    string name;
+    string itemTypeCode;
+};
+
+struct Statistics {
+    int MM;
+    int VI;
+    int AM;
+    int VM;
+    int tot;
+};
+
+
 string getPassword();
 
 string encrypt(string);
@@ -28,11 +43,11 @@ int getChoice();
 
 void AddEmployeeAcc();
 
-void produce();
+void produce(vector<Product> &catalog, Statistics &stats);
 
-void newProduct();
+void newProduct(vector<Product> &catalog, Statistics &stats);
 
-void showStats();
+void showStats(vector<Product> &catalog, Statistics &stats);
 
 int productTypeMenu();
 
@@ -42,7 +57,14 @@ void search(const string &);
 
 bool compare(const std::string &a, const std::string &b) { return a < b; }
 
+void readFiles(vector<Product> &catalog, Statistics &stats);
+
 int main() {
+    vector<Product> catalog;
+    Statistics stats{};
+
+    readFiles(catalog, stats);
+
     int choice = 0;
     cout << "Production Line Tracker\n" << endl;
     do {
@@ -52,7 +74,7 @@ int main() {
         switch (choice) {
             case 1 :
                 cout << "You Entered 1 \n" << endl;
-                produce();
+                produce(catalog, stats);
                 break;
             case 2:
                 cout << "You Entered 2 \n" << endl;
@@ -60,11 +82,11 @@ int main() {
                 break;
             case 3:
                 cout << "You Entered 3 \n" << endl;
-                newProduct();
+                newProduct(catalog, stats);
                 break;
             case 4:
                 cout << "You Entered 4 \n" << endl;
-                showStats();
+                showStats(catalog, stats);
                 break;
             case 5:
                 cout << "You Entered 5 \n" << endl;
@@ -111,7 +133,7 @@ int getChoice() {
  * a file to count each item's production numbers is also created here
  */
 
-void newProduct() {
+void newProduct(vector<Product> &catalog, Statistics &stats) {
     string manufacturer;
     string name;
     string type;
@@ -138,11 +160,12 @@ void newProduct() {
         }
 
     } while (typeChoice > 4 || typeChoice < 0);
-    output = manufacturer + ", " + name + ", " + type + ", ";
+    output = manufacturer + "," + name + "," + type;
     cout << "Creating the " << output << endl;
     ofstream myOFile;
     myOFile.open("catalog.csv", ios::app);
     myOFile << (output) << endl;
+    readFiles(catalog, stats);
     /*
     ofstream myPOFile;
     myPOFile.open((output), ios::app);
@@ -172,14 +195,14 @@ void AddEmployeeAcc() {
         bool sym = true;
 
         password = getPassword();
-        for (int i = 0; i < password.length(); i++) {
-            if (isupper(password[i]))
+        for (char i : password) {
+            if (isupper(i))
                 cap = true;
             else
                 low = true;
-            if (isdigit(password[i]))
+            if (isdigit(i))
                 num = true;
-            if(ispunct(password[i]) || isspace(password[i]))
+            if (ispunct(i) || isspace(i))
                 sym = false;
         }
         valid = (cap && low && num && sym);
@@ -192,10 +215,10 @@ void AddEmployeeAcc() {
     } while (!valid);
 
     encryptedPass = encrypt(password);
-    cout << encryptedPass;
+    //cout << encryptedPass;
     ofstream outFile;
     outFile.open("users", ios::app);
-    outFile << username << "," << encryptedPass << "," << endl;
+    outFile << username << "," << encryptedPass << endl;
 
 
 }
@@ -209,58 +232,45 @@ void AddEmployeeAcc() {
  * also keeps track of how many of each were made
  *
  */
-void produce() {
+void produce(vector<Product> &catalog, Statistics &stats) {
     string line;
     int i = 0;
     int productionNumber;
+    productionNumber = stats.tot;
     int itemCount = 0;
 
     //Opens files
 
-    ifstream myCFile;
-    myCFile.open("countProductionRecord", ios::app);
-    myCFile >> productionNumber;
-    myCFile.close();
-    ifstream myFile("catalog.csv");
+    for (const auto& s: catalog) {
+        i++;
+        cout << i << ". " << s.manufacturer << " " << s.name << " " << s.itemTypeCode << endl;
+    }
 
-    //shows a menu for the available products
 
-    if (myFile.is_open()) {
-        while (getline(myFile, line))  // takes a line form the file then is used to output
-        {
-            if (i == 0) {
-                i++;
-                continue;
-            } else {
-
-                cout << i << ". " << line << endl;
-                i++;
-            }
-        }
-        myFile.close();
-    } else cout << "Unable to open file";
     cout << "\nWhich Product is Being Produced...\nEnter the Number --> " << flush;
     int productChoice = 0;
     cin >> productChoice;
     string type, name, man;
     string product;
-    ifstream mySFile("catalog.csv");
+    type = catalog[productChoice - 1].itemTypeCode;
+    name = catalog[productChoice - 1].name;
+    man = catalog[productChoice - 1].manufacturer;
 
     //Finds the actual product with corresponding choice
-
-    for (int h = 1; h <= (productChoice + 1); h++) {
-
-        getline(mySFile, man, ',');
-        getline(mySFile, name, ',');
-        getline(mySFile, type, ',');
-
+    if (type == "MM") {
+        itemCount = stats.MM;
+    } else if (type == "VI") {
+        itemCount = stats.VI;
+    } else if (type == "AM") {
+        itemCount = stats.AM;
+    } else if (type == "VM") {
+        itemCount = stats.VM;
     }
-    if (productChoice <= (i - 1)) {
-        ifstream myPIFile;
-        myPIFile.open((type + "counter"), ios::app);
-        myPIFile >> itemCount;
-        myPIFile.close();
-        product = man + name + type;
+
+
+    if (productChoice <= (i)) {
+
+        product = man + " " + name + " " + type;
 
         cout << "You Selected : " << product << endl;
         cout << "\nHow Many Are Being Produced -->" << flush;
@@ -275,28 +285,34 @@ void produce() {
             ++productionNumber;
             ++itemCount;
             myPFile << " |||| Production # " << setw(6) << setfill('0') << productionNumber << " |||| " << setw(25)
-                    << setfill(' ') << product.substr(1, (product.length()))
-                    << " |||| Serial # " << man.substr(1, 3)
-                    << (type.substr(1, 2)) << setw(6) << setfill('0') << itemCount
+                    << setfill(' ') << product.substr(0, (product.length()))
+                    << " |||| Serial # " << man.substr(0, 3)
+                    << type << setw(6) << setfill('0') << itemCount
                     << endl;
         }
 
     } else {
         cout << "Invalid Selection..." << endl;
     }
+    if (type == "MM") {
+        stats.MM = itemCount;
+    } else if (type == "VI") {
+        stats.VI = itemCount;
+    } else if (type == "AM") {
+        stats.AM = itemCount;
+    } else if (type == "VM") {
+        stats.VM = itemCount;
+    }
+    stats.tot = productionNumber;
     ofstream myCOFile;          //vvv   updates the number of total products that have been made
     myCOFile.open("countProductionRecord");
-    myCOFile << productionNumber;
+    myCOFile << stats.MM << "," << stats.VI << "," << stats.AM << "," << stats.VM << "," << stats.tot;
     myCOFile.close();
-    ofstream myPFile;            //vvv   updates the number of each product that have been made
-    myPFile.open(type + "counter");
-    myPFile << itemCount;
-    myPFile.close();
 
 
 }
 
-void showStats() {
+void showStats(vector<Product> &catalog, Statistics &stats) {
     string line;
     int chosen = statMenu();
 
@@ -311,72 +327,44 @@ void showStats() {
             }
             myFile.close();
         } else cout << "Unable to open file";
-    } else if (chosen == 2) {
-
-        ifstream myFile("catalog.csv");
-        if (myFile.is_open()) {
-            vector<string> temp;
-            string man, name, type, no;
-
-
-            while (getline(myFile, no))  // takes a line form the file then is used to output
-            {
-
-                getline(myFile, man, ',');
-                getline(myFile, name, ',');
-                getline(myFile, type, ',');
-
-                temp.push_back(name);
+    }
+    else if (chosen == 2) {
+        vector <string> temp;
+        for(const auto& i : catalog){
+            temp.push_back(i.name);
+        }
+        sort(temp.begin(), temp.end(), compare);
 
 
-            }
-            temp.pop_back();
-            sort(temp.begin(), temp.end(), compare);
-            myFile.close();
-
-            for (const string &i : temp) {
-                cout << i << endl;
-            }
+        for (const auto& i : catalog) {
+            cout << i.name << endl;
+        }
 
 
-        } else cout << "Unable to open file";
-    } else if (chosen == 3) {
-
-        ifstream myFile("catalog.csv");
-        if (myFile.is_open()) {
-            vector<string> temp;
-            string man, name, type, no;
-
-
-            while (getline(myFile, no))  // takes a line form the file then is used to output
-            {
-
-                getline(myFile, man, ',');
-                getline(myFile, name, ',');
-                getline(myFile, type, ',');
-
-                temp.push_back(man);
+    }
+    else if (chosen == 3) {
+        vector <string> tempMan;
+        for(const auto& i : catalog){
+            tempMan.push_back(i.name);
+        }
+        sort(tempMan.begin(), tempMan.end(), compare);
 
 
-            }
-            temp.pop_back();
-            sort(temp.begin(), temp.end(), compare);
-            myFile.close();
-
-            for (const string &i : temp) {
-                cout << i << endl;
-            }
-
-
-        } else cout << "Unable to open file";
-    } else if (chosen == 4) {
+        for (const auto& i : catalog) {
+            cout << i.manufacturer << endl;
+        }
+    }
+    else if (chosen == 4) {
         string serial;
-        cout << "What is the Serial Number -->  " << flush;
-        cin >> serial;
+        cout << "What is the Serial Number -->  " <<
+             flush;
+        cin >>
+            serial;
         search(serial);
 
-    } else {
-        showStats();
+    }
+    else {
+     cout << "Unable to open file";
     }
 }
 
@@ -443,7 +431,7 @@ string encrypt(string str) {
     }
 }
 
-void login(){
+void login() {
 
     ifstream myFile("users");
     vector<string> users;
@@ -454,44 +442,92 @@ void login(){
     {
 
         getline(myFile, user, ',');
-        getline(myFile, pass, ',');
+        getline(myFile, pass);
 
 
         users.push_back(user);
         keys.push_back(pass);
-        cout << user << " " << pass << endl;
+        // cout << user << " " << pass << endl;
 
     }
 
     string username, password;
     cout << "Enter username -->" << flush;
     cin >> username;
-    cout << endl;
     cout << "Enter password -->" << flush;
     cin >> password;
     password = encrypt(password);
     bool correctName = false;
     bool correctPass = false;
     int count = 0;
-    for (int i = 0 ; i < users.size(); i++) {
-        if(users[i] == username){
+    for (const auto & user : users) {
+        if (user == username) {
             correctName = true;
             break;
         }
         count++;
     }
-    cout << count << endl;
-    if(!correctName) {
+    //cout << count << endl;
+    if (!correctName) {
         cout << "Not Valid Username" << endl;
     }
-    if(keys[count] == password){
+    if (keys[count] == password) {
         correctPass = true;
-    }
-    else
+    } else
         cout << "Incorrect Password" << endl;
 
-    if(correctName && correctPass){
+    if (correctName && correctPass) {
         cout << "Login Successful" << endl;
     }
+
+}
+
+void readFiles(vector<Product> &catalog, Statistics &stats) {
+    Product tempProduct;
+    Statistics tempStats{};
+
+
+    ifstream myFile("catalog.csv");
+    string line, no, name, man, type;
+    if (myFile.is_open()) {
+        while (myFile.good())  // takes a line form the file then is used to output
+        {
+            getline(myFile, man, ',');
+            getline(myFile, name, ',');
+            getline(myFile, type);
+
+            tempProduct.name = name;
+            tempProduct.manufacturer = man;
+            tempProduct.itemTypeCode = type;
+            catalog.push_back(tempProduct);
+
+        }
+        myFile.close();
+        catalog.pop_back();
+    }
+
+
+    ifstream myRecFile("countProductionRecord");
+    string vm, am, vi, mm, tot;
+    if (myRecFile.is_open()) {
+        while (myRecFile.good()) {
+            getline(myRecFile, mm, ',');
+            getline(myRecFile, vi, ',');
+            getline(myRecFile, am, ',');
+            getline(myRecFile, vm, ',');
+            getline(myRecFile, tot);
+
+            tempStats.AM = stoi(am);
+            tempStats.VM = stoi(vm);
+            tempStats.MM = stoi(mm);
+            tempStats.VI = stoi(vi);
+            tempStats.tot = stoi(tot);
+            stats = (tempStats);
+
+
+        }
+        myRecFile.close();
+    }
+
 
 }
