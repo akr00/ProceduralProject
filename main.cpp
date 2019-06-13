@@ -241,7 +241,7 @@ void produce(vector<Product> &catalog, Statistics &stats) {
 
     //Opens files
 
-    for (const auto& s: catalog) {
+    for (const auto &s: catalog) {
         i++;
         cout << i << ". " << s.manufacturer << " " << s.name << " " << s.itemTypeCode << endl;
     }
@@ -327,34 +327,31 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
             }
             myFile.close();
         } else cout << "Unable to open file";
-    }
-    else if (chosen == 2) {
-        vector <string> temp;
-        for(const auto& i : catalog){
+    } else if (chosen == 2) {
+        vector<string> temp;
+        for (const auto &i : catalog) {
             temp.push_back(i.name);
         }
         sort(temp.begin(), temp.end(), compare);
 
 
-        for (const auto& i : catalog) {
+        for (const auto &i : catalog) {
             cout << i.name << endl;
         }
 
 
-    }
-    else if (chosen == 3) {
-        vector <string> tempMan;
-        for(const auto& i : catalog){
+    } else if (chosen == 3) {
+        vector<string> tempMan;
+        for (const auto &i : catalog) {
             tempMan.push_back(i.name);
         }
         sort(tempMan.begin(), tempMan.end(), compare);
 
 
-        for (const auto& i : catalog) {
+        for (const auto &i : catalog) {
             cout << i.manufacturer << endl;
         }
-    }
-    else if (chosen == 4) {
+    } else if (chosen == 4) {
         string serial;
         cout << "What is the Serial Number -->  " <<
              flush;
@@ -362,9 +359,8 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
             serial;
         search(serial);
 
-    }
-    else {
-     cout << "Unable to open file";
+    } else {
+        cout << "Unable to open file";
     }
 }
 
@@ -460,7 +456,7 @@ void login() {
     bool correctName = false;
     bool correctPass = false;
     int count = 0;
-    for (const auto & user : users) {
+    for (const auto &user : users) {
         if (user == username) {
             correctName = true;
             break;
