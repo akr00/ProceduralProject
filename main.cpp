@@ -4,7 +4,7 @@
  *
  *
  * @author Aiden Ridgeway
- * @bug breaks / loops when a space is entered in the 'cin' within newProduct
+ * @bug none
  */
 
 #include <iostream>
@@ -73,23 +73,23 @@ int main() {
 
         switch (choice) {
             case 1 :
-                cout << "You Entered 1 \n" << endl;
+                //cout << "You Entered 1 \n" << endl;
                 produce(catalog, stats);
                 break;
             case 2:
-                cout << "You Entered 2 \n" << endl;
+                //cout << "You Entered 2 \n" << endl;
                 AddEmployeeAcc();
                 break;
             case 3:
-                cout << "You Entered 3 \n" << endl;
+                //cout << "You Entered 3 \n" << endl;
                 newProduct(catalog, stats);
                 break;
             case 4:
-                cout << "You Entered 4 \n" << endl;
+                //cout << "You Entered 4 \n" << endl;
                 showStats(catalog, stats);
                 break;
             case 5:
-                cout << "You Entered 5 \n" << endl;
+                //cout << "You Entered 5 \n" << endl;
                 login();
                 break;
             case 6:
@@ -173,6 +173,7 @@ void newProduct(vector<Product> &catalog, Statistics &stats) {
     myPOFile.close();
      */
 }
+
 /** @brief creates a new account by taking input and creating a user name and gets a password then stores them to a file.
  *
  *
@@ -187,7 +188,8 @@ void AddEmployeeAcc() {
 
     transform(firstName.begin(), firstName.end(), firstName.begin(), ::tolower); //sets to lowercase
     transform(lastName.begin(), lastName.end(), lastName.begin(), ::tolower);
-    string username = firstName.substr(0, 1) + lastName;  // sets username to the first letter of first name + last name... for Aiden Ridgeway, it would be aridgeway
+    string username = firstName.substr(0, 1) +
+                      lastName;  // sets username to the first letter of first name + last name... for Aiden Ridgeway, it would be aridgeway
 
     cout << "Your username is: " << username << endl;
     bool valid;
@@ -313,6 +315,7 @@ void produce(vector<Product> &catalog, Statistics &stats) {
 
 
 }
+
 /** @brief a way to show the production stastics
  *
  * @param catalog
@@ -341,7 +344,7 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
         } else cout << "Unable to open file";
     } else if (chosen == 2) {
         vector<string> temp;
-        for (const auto &i : catalog) {
+        temp.reserve(catalog.size()); for (const auto &i : catalog) {
             temp.push_back(i.name);
         }
         sort(temp.begin(), temp.end(), compare);
@@ -354,7 +357,7 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
 
     } else if (chosen == 3) {
         vector<string> tempMan;
-        for (const auto &i : catalog) {
+        tempMan.reserve(catalog.size()); for (const auto &i : catalog) {
             tempMan.push_back(i.name);
         }
         sort(tempMan.begin(), tempMan.end(), compare);
@@ -468,8 +471,8 @@ void login() {
     bool correctName = false;
     bool correctPass = false;
     int count = 0;
-    for (const auto &user : users) {
-        if (user == username) {
+    for (const auto &userInput : users) {
+        if (userInput == username) {
             correctName = true;
             break;
         }
