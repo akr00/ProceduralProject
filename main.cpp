@@ -173,7 +173,11 @@ void newProduct(vector<Product> &catalog, Statistics &stats) {
     myPOFile.close();
      */
 }
-
+/** @brief creates a new account by taking input and creating a user name and gets a password then stores them to a file.
+ *
+ *
+ *
+ */
 void AddEmployeeAcc() {
 
     cout << "Enter your full first and last name --> " << flush;
@@ -181,14 +185,14 @@ void AddEmployeeAcc() {
     cin >> firstName >> lastName;
     string encryptedPass;
 
-    transform(firstName.begin(), firstName.end(), firstName.begin(), ::tolower);
+    transform(firstName.begin(), firstName.end(), firstName.begin(), ::tolower); //sets to lowercase
     transform(lastName.begin(), lastName.end(), lastName.begin(), ::tolower);
-    string username = firstName.substr(0, 1) + lastName;
+    string username = firstName.substr(0, 1) + lastName;  // sets username to the first letter of first name + last name... for Aiden Ridgeway, it would be aridgeway
 
     cout << "Your username is: " << username << endl;
     bool valid;
     string password;
-    do {
+    do {  // checks for a valid password
         bool cap = false;
         bool num = false;
         bool low = false;
@@ -196,13 +200,13 @@ void AddEmployeeAcc() {
 
         password = getPassword();
         for (char i : password) {
-            if (isupper(i))
+            if (isupper(i))  // if capital
                 cap = true;
             else
-                low = true;
+                low = true; // if lower
             if (isdigit(i))
                 num = true;
-            if (ispunct(i) || isspace(i))
+            if (ispunct(i) || isspace(i))  // if has special character
                 sym = false;
         }
         valid = (cap && low && num && sym);
@@ -214,12 +218,12 @@ void AddEmployeeAcc() {
         }
     } while (!valid);
 
-    encryptedPass = encrypt(password);
+    encryptedPass = encrypt(password); // encrypts password
     //cout << encryptedPass;
     ofstream outFile;
     outFile.open("users", ios::app);
-    outFile << username << "," << encryptedPass << endl;
-
+    outFile << username << "," << encryptedPass << endl; // outputs to a file
+    outFile.close();
 
 }
 
@@ -234,14 +238,12 @@ void AddEmployeeAcc() {
  */
 void produce(vector<Product> &catalog, Statistics &stats) {
     string line;
-    int i = 0;
+    int i = 0; // acts as a counter to have a way to enter a number for choice of product
     int productionNumber;
     productionNumber = stats.tot;
     int itemCount = 0;
 
-    //Opens files
-
-    for (const auto &s: catalog) {
+    for (const auto &s: catalog) {  // prints each product with a corresponding number, stating at 1
         i++;
         cout << i << ". " << s.manufacturer << " " << s.name << " " << s.itemTypeCode << endl;
     }
@@ -252,11 +254,11 @@ void produce(vector<Product> &catalog, Statistics &stats) {
     cin >> productChoice;
     string type, name, man;
     string product;
-    type = catalog[productChoice - 1].itemTypeCode;
+    type = catalog[productChoice - 1].itemTypeCode;  // gets each part of the product to be used individually
     name = catalog[productChoice - 1].name;
     man = catalog[productChoice - 1].manufacturer;
 
-    //Finds the actual product with corresponding choice
+    //Finds the product type count for the corresponding type
     if (type == "MM") {
         itemCount = stats.MM;
     } else if (type == "VI") {
@@ -268,7 +270,7 @@ void produce(vector<Product> &catalog, Statistics &stats) {
     }
 
 
-    if (productChoice <= (i)) {
+    if (productChoice <= (i)) {  // if choice is valid
 
         product = man + " " + name + " " + type;
 
@@ -291,7 +293,7 @@ void produce(vector<Product> &catalog, Statistics &stats) {
                     << endl;
         }
 
-    } else {
+    } else { //will not do anything else, didnt change values
         cout << "Invalid Selection..." << endl;
     }
     if (type == "MM") {
@@ -311,8 +313,18 @@ void produce(vector<Product> &catalog, Statistics &stats) {
 
 
 }
-
+/** @brief a way to show the production stastics
+ *
+ * @param catalog
+ * @param stats
+ */
 void showStats(vector<Product> &catalog, Statistics &stats) {
+    cout << "Total Products Created: " << stats.tot << endl;
+    cout << "Total Audio Products Created: " << stats.MM << endl;
+    cout << "Total Video Products Created: " << stats.VI << endl;
+    cout << "Total Audio Mobile Products Created: " << stats.AM << endl;
+    cout << "Total Video Mobile Products Created: " << stats.VM << endl;
+    cout << endl;
     string line;
     int chosen = statMenu();
 
