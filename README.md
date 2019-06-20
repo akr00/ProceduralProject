@@ -18,7 +18,7 @@ This is a production ine tracker that has many capabilities, including:<br>
 
 ## Demonstration
 ![](.idea/ezgif.com-video-to-gif.gif)
-![](.idea/ezgif.com-video-to-gif.gif)
+![](.idea/ezgif.com-video-to-gif-2.gif)
 ![](.idea/ezgif.com-video-to-gif-3.gif)
 
 ## Documentation
