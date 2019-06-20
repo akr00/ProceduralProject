@@ -17,9 +17,9 @@ This is a production ine tracker that has many capabilities, including:<br>
 
 
 ## Demonstration
-![](ezgif.com-video-to-gif.gif)
-![](ezgif.com-video-to-gif-2.gif)
-![](ezgif.com-video-to-gif-3.gif)
+![](.idea/ezgif.com-video-to-gif.gif)
+![](.idea/ezgif.com-video-to-gif.gif)
+![](.idea/ezgif.com-video-to-gif-3.gif)
 
 ## Documentation
 Using Doxygen, and the in code javadoc style comments, made a file.
