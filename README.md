@@ -24,7 +24,7 @@ This is a production line tracker that has many capabilities, including:<br>
 ## Documentation
 Using Doxygen, and the in code javadoc style comments, made a file.
 
-[Doxygen](https://github.com/akr00/ProceduralProject/blob/master/docs/main.docs/html/main_8cpp.html){:target="_blank"}
+
 ## Getting Started
 When the application opens, there is a menu system, 
 you should first create new products, then you can properly produce products.<br>
