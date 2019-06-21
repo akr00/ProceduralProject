@@ -19,8 +19,6 @@
 
 using namespace std;
 
-
-
 int main() {
     vector<Product> catalog;
     Statistics stats{};
@@ -31,7 +29,6 @@ int main() {
     cout << "Production Line Tracker\n" << endl;
     do {
         choice = getChoice();
-
 
         switch (choice) {
             case 1 :
@@ -63,7 +60,6 @@ int main() {
                 cin.ignore();
         }
     } while (choice != 6);
-
 
     return 0;
 }
@@ -188,7 +184,6 @@ void AddEmployeeAcc() {
     outFile.open("users", ios::app);
     outFile << username << "," << encryptedPass << endl; // outputs to a file
     outFile.close();
-
 }
 
 /**
@@ -212,7 +207,6 @@ void produce(vector<Product> &catalog, Statistics &stats) {
         cout << i << ". " << s.manufacturer << " " << s.name << " " << s.itemTypeCode << endl;
     }
 
-
     cout << "\nWhich Product is Being Produced...\nEnter the Number --> " << flush;
     int productChoice = 0;
     cin >> productChoice;
@@ -232,7 +226,6 @@ void produce(vector<Product> &catalog, Statistics &stats) {
     } else if (type == "VM") {
         itemCount = stats.VM;
     }
-
 
     if (productChoice <= (i)) {  // if choice is valid
 
@@ -274,8 +267,6 @@ void produce(vector<Product> &catalog, Statistics &stats) {
     myCOFile.open("countProductionRecord");
     myCOFile << stats.MM << "," << stats.VI << "," << stats.AM << "," << stats.VM << "," << stats.tot;
     myCOFile.close();
-
-
 }
 
 /** @brief a way to show the production stastics
@@ -311,11 +302,9 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
         }
         sort(temp.begin(), temp.end(), compare);
 
-
         for (const auto &i : catalog) {
             cout << i.name << endl;
         }
-
 
     } else if (chosen == 3) {
         vector<string> tempMan;
@@ -323,7 +312,6 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
             tempMan.push_back(i.name);
         }
         sort(tempMan.begin(), tempMan.end(), compare);
-
 
         for (const auto &i : catalog) {
             cout << i.manufacturer << endl;
@@ -367,7 +355,6 @@ int statMenu() {
     cout << "\n   Enter Menu Choice --> " << flush;
     cin >> choice;
 
-
     return choice;
 }
 
@@ -391,10 +378,8 @@ string getPassword() {
     string pass;
     cin >> pass;
 
-
     return pass;
 }
-
 
 string encrypt(string str) {
     if (str.length() == 0) {
@@ -413,15 +398,12 @@ void login() {
 
     while (myFile.good())  // takes a line form the file then is used to output
     {
-
         getline(myFile, user, ',');
         getline(myFile, pass);
-
 
         users.push_back(user);
         keys.push_back(pass);
         // cout << user << " " << pass << endl;
-
     }
 
     string username, password;
@@ -459,7 +441,6 @@ void readFiles(vector<Product> &catalog, Statistics &stats) {
     Product tempProduct;
     Statistics tempStats{};
 
-
     ifstream myFile("catalog.csv");
     string line, no, name, man, type;
     if (myFile.is_open()) {
@@ -479,7 +460,6 @@ void readFiles(vector<Product> &catalog, Statistics &stats) {
         catalog.pop_back();
     }
 
-
     ifstream myRecFile("countProductionRecord");
     string vm, am, vi, mm, tot;
     if (myRecFile.is_open()) {
@@ -497,10 +477,7 @@ void readFiles(vector<Product> &catalog, Statistics &stats) {
             tempStats.tot = stoi(tot);
             stats = (tempStats);
 
-
         }
         myRecFile.close();
     }
-
-
 }
