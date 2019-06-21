@@ -1,8 +1,6 @@
 /**@file main.cpp
  * @brief A production line tracker
  *
- *
- *
  * @author Aiden Ridgeway
  * @bug none
  */
@@ -89,6 +87,9 @@ int getChoice() {
  *
  * catalog holds all of the created products
  * a file to count each item's production numbers is also created here
+ *
+ * @param catalog
+ * @param stats
  */
 
 void newProduct(vector<Product> &catalog, Statistics &stats) {
@@ -194,6 +195,8 @@ void AddEmployeeAcc() {
  * outputs each product to the productionLog
  * also keeps track of how many of each were made
  *
+ * @param catalog
+ * @param stats
  */
 void produce(vector<Product> &catalog, Statistics &stats) {
     string line;
@@ -332,7 +335,7 @@ void showStats(vector<Product> &catalog, Statistics &stats) {
 /**
  * @brief Shows a menu and gathers user input to select an option.
  *
- * @return
+ * @return a menu choice
  */
 int productTypeMenu() {
     int pick = 0;
@@ -345,7 +348,11 @@ int productTypeMenu() {
     cin >> pick;
     return pick;
 }
-
+/**
+ * @brief Shows a menu and gathers user input to select an option.
+ *
+ * @return a menu choice
+ */
 int statMenu() {
     int choice;
     cout << "1. Show Production Log" << endl;
@@ -357,7 +364,10 @@ int statMenu() {
 
     return choice;
 }
-
+/**@brief takes a string input, then searches a file for the input
+ *
+ * @param input
+ */
 void search(const string &input) {
     ifstream fileInput("productionLog");
     string line;
@@ -368,7 +378,10 @@ void search(const string &input) {
         }
     }
 }
-
+/**@brief gets input for a password
+ *
+ * @return string (password)
+ */
 string getPassword() {
     cout
             << "\nThe password must contain at least one digit, at least one lowercase letter, and at least one uppercase letter.\n"
@@ -380,7 +393,11 @@ string getPassword() {
 
     return pass;
 }
-
+/**@brief takes in password, then encrypts it and returns it
+ *
+ * @param str
+ * @return encrypted password
+ */
 string encrypt(string str) {
     if (str.length() == 0) {
         return str;
@@ -388,7 +405,9 @@ string encrypt(string str) {
         return char((int) str[0] + 17) + encrypt(str.substr(1, str.length() - 1));
     }
 }
-
+/**@brief askes for input of username and password, checks if correct
+ *
+ */
 void login() {
 
     ifstream myFile("users");
@@ -436,7 +455,11 @@ void login() {
     }
 
 }
-
+/**@brief reads all necessary info from each line of the storaage files
+ *
+ * @param catalog
+ * @param stats
+ */
 void readFiles(vector<Product> &catalog, Statistics &stats) {
     Product tempProduct;
     Statistics tempStats{};
