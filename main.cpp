@@ -21,7 +21,7 @@ using namespace std;
 
 int main() {
     vector<Product> catalog;
-    Statistics stats{};
+    Statistics stats;
 
     readFiles(catalog, stats);
 
