@@ -21,7 +21,7 @@ using namespace std;
 
 int main() {
     vector<Product> catalog;
-    Statistics stats;
+    Statistics stats{};
 
     readFiles(catalog, stats);
 
@@ -439,7 +439,7 @@ void login() {
 
 void readFiles(vector<Product> &catalog, Statistics &stats) {
     Product tempProduct;
-    Statistics tempStats{};
+    Statistics tempStats{}{};
 
     ifstream myFile("catalog.csv");
     string line, no, name, man, type;
