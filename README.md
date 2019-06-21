@@ -7,7 +7,7 @@ Finished on: 6/21/19<br>
 
 https://repl.it/@aridgeway00/Procedural-Project
 
-This is a production ine tracker that has many capabilities, including:<br>
+This is a production line tracker that has many capabilities, including:<br>
     - Creation of new products<br>
     - Production tracking<br>
     - User accounts<br>
