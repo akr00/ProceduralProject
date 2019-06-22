@@ -24,7 +24,7 @@ This is a production line tracker that has many capabilities, including:<br>
 ## Documentation
 Using Doxygen, and the in code javadoc style comments, made a file.
 
-akr00.github.io/ProceduralProject/html
+https://akr00.github.io/ProceduralProject/html
 
 ## Getting Started
 When the application opens, there is a menu system, 
